@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>垃圾分类侠 - 智能垃圾分类助手</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>垃圾分类侠 <span class="subtitle">智能垃圾分类助手</span></h1>
+        </header>
+
+        <main>
+            <div class="search-container">
+                <input type="text" id="waste-input" placeholder="请输入垃圾名称...">
+                <button id="search-btn">分类</button>
+            </div>
+
+            <div class="result-container" id="result-container">
+                <div class="loading-spinner" id="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>正在分析中...</p>
+                </div>
+                
+                <div class="result-card" id="result-card">
+                    <div class="result-header">
+                        <h2>分类结果</h2>
+                    </div>
+                    <div class="result-content">
+                        <div class="waste-info">
+                            <h3 id="waste-name">-</h3>
+                            <div class="category-badge" id="category-badge">未知</div>
+                            <p id="waste-description">请输入垃圾名称进行查询</p>
+                            <div class="disposal-guide">
+                                <h4>处理指南</h4>
+                                <p id="disposal-guide">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="categories-guide">
+                <div class="category-item recyclable">
+                    <div class="category-icon"><i class="fas fa-recycle"></i></div>
+                    <h3>可回收物</h3>
+                </div>
+                <div class="category-item hazardous">
+                    <div class="category-icon"><i class="fas fa-biohazard"></i></div>
+                    <h3>有害垃圾</h3>
+                </div>
+                <div class="category-item kitchen">
+                    <div class="category-icon"><i class="fas fa-utensils"></i></div>
+                    <h3>厨余垃圾</h3>
+                </div>
+                <div class="category-item other">
+                    <div class="category-icon"><i class="fas fa-trash-alt"></i></div>
+                    <h3>其他垃圾</h3>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p> 2025 垃圾分类侠 | 由 AI 提供技术支持</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
