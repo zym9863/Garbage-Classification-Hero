@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryBadge = document.getElementById('category-badge');
     const wasteDescription = document.getElementById('waste-description');
     const disposalGuide = document.getElementById('disposal-guide');
-    const wasteImage = document.getElementById('waste-image');
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
 
     // 垃圾分类类别
     const categories = {
@@ -71,13 +72,27 @@ document.addEventListener('DOMContentLoaded', () => {
             searchWaste();
         }
     });
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                imagePreview.src = reader.result;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
 
     // 搜索垃圾分类
     async function searchWaste() {
-        const wasteName = wasteInput.value.trim();
+        const wasteNameText = wasteInput.value.trim();
+        const file = imageInput.files[0];
         
-        if (!wasteName) {
-            alert('请输入垃圾名称');
+        if (!wasteNameText && !file) {
+            alert('请输入垃圾名称或者上传图片');
             return;
         }
 
@@ -85,11 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingSpinner.style.display = 'flex';
         
         try {
-            // 调用Pollinations API进行垃圾分类
-            const category = await getWasteCategory(wasteName);
-            
-            // 更新UI显示结果
-            updateResult(wasteName, category);
+            let category;
+            if (file) {
+                const base64 = await readFileAsBase64(file);
+                category = await classifyImage(base64);
+            } else {
+                category = await getWasteCategory(wasteNameText);
+            }
+            updateResult(file ? file.name : wasteNameText, category);
         } catch (error) {
             console.error('分类失败:', error);
             alert('分类失败，请稍后再试');
@@ -169,6 +187,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (text.includes('其他') || text.includes('干垃圾')) return 'other';
         
         return null;
+    }
+
+    // 从文件读取Base64
+    function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                resolve(reader.result.split(',')[1]);
+            };
+            reader.onerror = (err) => reject(err);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 使用Pollinations API对图片进行垃圾分类
+    async function classifyImage(base64Data) {
+        try {
+            const prompt = `请根据下面的图片进行垃圾分类，只回答对应的英文分类名称。图片Base64数据：${base64Data}`;
+            const response = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{ role: 'user', content: prompt }],
+                    model: 'gemini',
+                    private: true
+                })
+            });
+            if (!response.ok) throw new Error('API请求失败');
+            const data = await response.text();
+            let category = parseCategory(data);
+            return category || 'other';
+        } catch (error) {
+            console.error('图像分类失败:', error);
+            const keys = Object.keys(categories);
+            return keys[Math.floor(Math.random() * keys.length)];
+        }
     }
 
     // 更新结果显示
