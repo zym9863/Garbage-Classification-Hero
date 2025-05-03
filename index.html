@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>垃圾分类侠 - 智能垃圾分类助手</title>
+    <meta name="description" content="一个简单易用的垃圾分类查询工具，帮助用户快速了解各类垃圾的正确分类方式">
+    <meta name="theme-color" content="#2ECC71">
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="垃圾分类侠">
+    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
+
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -30,7 +42,7 @@
                     <div class="spinner"></div>
                     <p>正在分析中...</p>
                 </div>
-                
+
                 <div class="result-card" id="result-card">
                     <div class="result-header">
                         <h2>分类结果</h2>
@@ -75,5 +87,20 @@
     </div>
 
     <script src="script.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
